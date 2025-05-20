@@ -1,12 +1,12 @@
 
-"use client"; // Keep as client component if it uses client-side hooks for logout confirmation etc.
-              // Or convert parts to server components if possible. For now, keep as client.
+"use client"; 
 
 import { PdfProcessorClient } from '@/components/pdf-processor-client';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Button } from '@/components/ui/button';
-import { logout } from '@/app/login/actions'; // Assuming logout is in login/actions.ts
-import { LogOut } from 'lucide-react';
+import { logout } from '@/app/login/actions'; 
+import { LogOut, DownloadCloud, FileCode2 } from 'lucide-react'; // Added FileCode2 for scripts icon
+import Link from 'next/link'; // Import Link
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +31,11 @@ export default function HomePage() {
     <main className="min-h-screen bg-background text-foreground p-4 md:p-8 flex flex-col items-center">
       <div className="container mx-auto max-w-4xl w-full">
         <div className="absolute top-4 right-4 flex items-center space-x-2">
+          <Link href="/scripts" passHref>
+            <Button variant="outline" size="icon" aria-label="Download Helper Scripts">
+              <FileCode2 className="h-5 w-5" />
+            </Button>
+          </Link>
           <ThemeToggleButton />
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -55,7 +60,7 @@ export default function HomePage() {
           </AlertDialog>
         </div>
         
-        <header className="mb-8 text-center py-6 pt-16 md:pt-6"> {/* Added padding top for space from buttons */}
+        <header className="mb-8 text-center py-6 pt-16 md:pt-6">
           <h1 className="text-4xl md:text-5xl font-bold text-primary tracking-tight">
             PDF Scraper Pro
           </h1>
