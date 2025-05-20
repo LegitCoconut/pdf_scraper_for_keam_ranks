@@ -21,7 +21,7 @@ export type ExtractPdfDataInput = z.infer<typeof ExtractPdfDataInputSchema>;
 const ExtractPdfDataOutputSchema = z.object({
   extractedData: z
     .string()
-    .describe('The extracted data from the PDF, formatted as a CSV string. The first row of the CSV must be the column headers.'),
+    .describe('The extracted data from the PDF, formatted as a CSV string. The first row of the CSV must be the column headers: Phase,Course,College_Name,College_Code,Type,Rank_Details.'),
 });
 export type ExtractPdfDataOutput = z.infer<typeof ExtractPdfDataOutputSchema>;
 
@@ -33,14 +33,27 @@ const extractPdfDataPrompt = ai.definePrompt({
   name: 'extractPdfDataPrompt',
   input: {schema: ExtractPdfDataInputSchema},
   output: {schema: ExtractPdfDataOutputSchema},
-  prompt: `You are an expert data extraction specialist. Your task is to meticulously extract all tabular data from the provided PDF document.
-- Identify all column headers accurately. These headers will form the first row of your CSV output.
-- Extract all data rows corresponding to these headers.
-- Information like a 'course name' or 'program' might be present at the top of each page or section. Ensure this information is correctly associated with the data rows it pertains to, likely as a value in a relevant column (e.g., 'programme' or 'course_name').
-- If the document contains multiple tables or sections for different courses, append them sequentially in the CSV.
-- Within each individual data cell, aim to represent the content on a single line. If a cell's original text contains newlines, try to replace them with a space. If newlines are absolutely essential for the data's meaning and must be preserved, ensure they are correctly escaped within a properly quoted CSV field.
-- Return the entire extracted dataset as a single CSV string. Ensure the CSV format is valid, with values properly quoted if they contain commas, newlines (between rows), or quotes.
-- Do not include any explanatory text or summaries, only the CSV data.
+  prompt: `You are an expert data extraction specialist. Your task is to meticulously extract specific tabular data from all pages of the provided PDF document and return it as a single, valid CSV string.
+
+The required columns are EXACTLY: Phase,Course,College_Name,College_Code,Type,Rank_Details
+
+Instructions for each column:
+1.  **Phase**: Identify the phase. If no phase information is explicitly found in the document for a row, default this value to '1'.
+2.  **Course**: Extract the course name or program name. This information might be present at the top of a page or section; ensure it's correctly associated with all relevant data rows.
+3.  **College_Name**: Extract the full name of the college. CRITICAL: Remove any newline characters from the college name, presenting it as a single line of text.
+4.  **College_Code**: Extract the college code.
+5.  **Type**: Extract the type (e.g., of course, institution, program category).
+6.  **Rank_Details**: Extract any ranking information or related details.
+
+General Extraction Rules:
+- Process ALL pages of the PDF. If data for the same table or logical group spans multiple pages, append the rows sequentially.
+- The VERY FIRST ROW of your output CSV string MUST be the headers: "Phase,Course,College_Name,College_Code,Type,Rank_Details".
+- For each subsequent row, provide the data corresponding to these headers.
+- If a specific field (other than Phase, which defaults to '1') is not found or not applicable for a row, leave the corresponding CSV cell empty.
+- Ensure data within each cell is on a single line. If original text contains newlines, replace them with a space. If newlines are absolutely essential for meaning (e.g., within a multi-line rank detail), ensure they are correctly escaped within a properly quoted CSV field.
+- Ensure the entire output is a valid CSV format (e.g., values containing commas, newlines between rows, or quotes must be enclosed in double quotes, and internal double quotes must be escaped as "").
+- Do NOT include any explanatory text, summaries, or any content other than the CSV data itself. Your entire response should be the CSV string.
+
 Here is the PDF document: {{media url=pdfDataUri}}`,
   config: {
     safetySettings: [
@@ -67,3 +80,4 @@ const extractPdfDataFlow = ai.defineFlow(
     return output!;
   }
 );
+
