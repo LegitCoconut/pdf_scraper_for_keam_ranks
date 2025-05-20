@@ -75,7 +75,7 @@ export default function ScriptsPage() {
             <CardHeader>
               <CardTitle className="text-2xl text-accent">PDF Cropper</CardTitle>
               <CardDescription>
-                Select a PDF file via a popup window, then specify how you want to split its pages. This tool helps break down large PDFs into smaller, more manageable files for processing.
+                This tool helps to crop only the needed parts of a PDF, removing unwanted areas which could degrade the quality of PDF scraping.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -89,10 +89,11 @@ export default function ScriptsPage() {
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                   <li>Ensure the <code className="text-xs bg-muted px-1 rounded">pdf_cropper.py</code> script is accessible.</li>
                   <li>Run the script from your terminal (e.g., <code className="text-xs bg-muted px-1 rounded">python pdf_cropper.py</code>).</li>
-                  <li>A popup window will appear. Use it to select the PDF file you want to process.</li>
-                  <li>The script will then prompt you to enter details for splitting the pages (e.g., number of pages per new file).</li>
-                  <li>Provide the requested values.</li>
-                  <li>The script will then cut the PDF and save the new, smaller PDF files.</li>
+                  <li>A popup window will appear. Use it to select the PDF file you want to crop.</li>
+                  <li>A window will then open with a preview of the PDF.</li>
+                  <li>Use your mouse to draw a rectangle around the area you want to crop. <span className="text-destructive font-semibold">(Note: Markings will appear, selecting the area)</span>.</li>
+                  <li>After selecting the area, press the Enter key to confirm.</li>
+                  <li>The cropped PDF will be saved in the same folder as the script.</li>
                 </ul>
               </div>
             </CardContent>
