@@ -33,7 +33,15 @@ const extractPdfDataPrompt = ai.definePrompt({
   name: 'extractPdfDataPrompt',
   input: {schema: ExtractPdfDataInputSchema},
   output: {schema: ExtractPdfDataOutputSchema},
-  prompt: `You are an expert data extraction specialist. Your task is to extract all course data from the provided PDF document. Identify column headers and align the corresponding data accordingly. Return the extracted data as a CSV string. The first row of the CSV must be the column headers. Ensure the CSV format is valid and accurately represents all course data found within the PDF. Here is the PDF document: {{media url=pdfDataUri}}`,
+  prompt: `You are an expert data extraction specialist. Your task is to meticulously extract all tabular data from the provided PDF document.
+- Identify all column headers accurately. These headers will form the first row of your CSV output.
+- Extract all data rows corresponding to these headers.
+- Information like a 'course name' or 'program' might be present at the top of each page or section. Ensure this information is correctly associated with the data rows it pertains to, likely as a value in a relevant column (e.g., 'programme' or 'course_name').
+- If the document contains multiple tables or sections for different courses, append them sequentially in the CSV.
+- Within each individual data cell, aim to represent the content on a single line. If a cell's original text contains newlines, try to replace them with a space. If newlines are absolutely essential for the data's meaning and must be preserved, ensure they are correctly escaped within a properly quoted CSV field.
+- Return the entire extracted dataset as a single CSV string. Ensure the CSV format is valid, with values properly quoted if they contain commas, newlines (between rows), or quotes.
+- Do not include any explanatory text or summaries, only the CSV data.
+Here is the PDF document: {{media url=pdfDataUri}}`,
   config: {
     safetySettings: [
       {
