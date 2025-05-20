@@ -44,7 +44,7 @@ Instructions for each column:
 1.  **Phase**: Identify the phase. If no phase information is explicitly found in the document for a row, default this value to '1'.
 2.  **Course**: Extract the course name or program name. This information might be present at the top of a page or section; ensure it's correctly associated with all relevant data rows.
 3.  **College_Name**: Extract the full name of the college. CRITICAL: Remove any newline characters from the college name, presenting it as a single line of text.
-4.  **College_Code**: Extract the college code.
+4.  **College_Code**: Extract the college code. This code is often found directly to the left of the College_Name or in a column adjacent to it. Please ensure this is accurately captured.
 5.  **Type**: Extract the type (e.g., of course, institution, program category).
 6.  **Rank Categories (SM, EZ, MU, LA, BH, DV, VK, BX, KN, KU, SC, ST, EW)**: For each of these specific rank categories, extract the corresponding rank detail or value. If a rank category is not present or not applicable for a particular row/entry, leave the cell for that rank category empty in the CSV. Do NOT create a generic "Rank_Details" column.
 
@@ -83,3 +83,4 @@ const extractPdfDataFlow = ai.defineFlow(
     return output!;
   }
 );
+
