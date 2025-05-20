@@ -3,11 +3,12 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { logout } from '@/app/login/actions';
-import { LogOut, Home, Download, FileCode2 } from 'lucide-react';
+import { LogOut, Home, Download, FileCode2, Image as ImageIcon } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -91,7 +92,7 @@ export default function ScriptsPage() {
                   <li>Run the script from your terminal (e.g., <code className="text-xs bg-muted px-1 rounded">python pdf_cropper.py</code>).</li>
                   <li>A popup window will appear. Use it to select the PDF file you want to crop.</li>
                   <li>A window will then open with a preview of the PDF.</li>
-                  <li>Use your mouse to draw a rectangle around the area you want to crop. <span className="text-destructive font-semibold">(Note: Selected region marker will appear only after selecting the area)</span>.</li>
+                  <li>Use your mouse to draw a rectangle around the area you want to crop. <span className="text-destructive font-semibold">(Note: Markings will appear only after selecting the area)</span>.</li>
                   <li>After selecting the area, press the Enter key to confirm.</li>
                   <li>The cropped PDF will be saved in the same folder as the script.</li>
                 </ul>
@@ -141,6 +142,29 @@ export default function ScriptsPage() {
             </CardFooter>
           </Card>
         </div>
+
+        <section className="mt-12 py-8 border-t">
+          <div className="flex items-center justify-center mb-6">
+            <ImageIcon className="h-8 w-8 text-primary mr-3" />
+            <h2 className="text-3xl font-bold text-primary tracking-tight">
+              Visual Guide: PDF Cropper in Action
+            </h2>
+          </div>
+          <p className="text-center text-muted-foreground mb-6 max-w-xl mx-auto">
+            The image below shows an example of how the PDF Cropper script might look when you're selecting an area to crop.
+          </p>
+          <div className="bg-muted p-4 rounded-lg shadow-md max-w-2xl mx-auto">
+            <Image
+              src="/scripts/cropper.png"
+              alt="Screenshot of PDF Cropper script in use"
+              width={800}
+              height={600}
+              className="rounded-md w-full h-auto object-contain"
+              data-ai-hint="screenshot tutorial"
+            />
+          </div>
+        </section>
+
         <footer className="text-center py-8 mt-8 text-sm text-muted-foreground">
             <p>Note: These scripts are provided as-is. Always back up your original PDF files before processing.</p>
             <p>Ensure Python and the listed dependencies are correctly installed in your environment to run these scripts.</p>
