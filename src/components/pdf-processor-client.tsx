@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { extractPdfData, type ExtractPdfDataInput } from '@/ai/flows/extract-pdf-data';
-import { convertToCSV, downloadCSV } from '@/lib/csv-utils';
+import { convertToCSV, downloadCSV, parseCSVToArray } from '@/lib/csv-utils';
 import { Loader2, UploadCloud, FileText, Download, AlertTriangle, Link as LinkIcon } from 'lucide-react';
 import { DataTable } from '@/components/data-table';
 
@@ -82,14 +82,15 @@ export function PdfProcessorClient() {
         pdfDataUri = await fileToDataUri(pdfFile);
       } else if (activeTab === 'url' && pdfUrlInput.trim()) {
         const url = pdfUrlInput.trim();
-        if (url.startsWith('data:application/pdf;base64,')) {
+         // Allow both public HTTP/HTTPS URLs and data URIs
+        if (url.startsWith('data:application/pdf;base64,') || url.startsWith('http://') || url.startsWith('https://')) {
           pdfDataUri = url;
-        } else if (url.startsWith('http://') || url.startsWith('https://')) {
-          pdfDataUri = url; // Pass public URL to AI flow
-          toast({
-            title: "Processing URL",
-            description: "Attempting to process the public URL. Ensure it's accessible.",
-          });
+          if (url.startsWith('http')) {
+            toast({
+              title: "Processing URL",
+              description: "Attempting to process the public URL. Ensure it's accessible.",
+            });
+          }
         } else {
           toast({ title: "Invalid URL", description: "Please enter a valid public PDF URL or a Base64 data URI.", variant: "destructive" });
           setIsLoading(false);
@@ -101,41 +102,41 @@ export function PdfProcessorClient() {
         return;
       }
 
-      if (!pdfDataUri) { // Should not happen if logic above is correct
+      if (!pdfDataUri) { 
         toast({ title: "No PDF Data", description: "Could not prepare PDF data for processing.", variant: "destructive" });
         setIsLoading(false);
         return;
       }
       
       const input: ExtractPdfDataInput = { pdfDataUri };
-      const result = await extractPdfData(input);
+      const result = await extractPdfData(input); // result.extractedData is a CSV string
       
-      let jsonData;
+      let parsedCsvData: Record<string, any>[];
       try {
-        jsonData = JSON.parse(result.extractedData);
-      } catch (parseError) {
-        console.error("JSON Parsing error:", parseError);
-        setError("AI returned invalid JSON. Could not parse extracted data. The PDF might be complex or not machine-readable.");
+        if (typeof result.extractedData !== 'string' || result.extractedData.trim() === '') {
+          parsedCsvData = [];
+        } else {
+          parsedCsvData = parseCSVToArray(result.extractedData);
+        }
+      } catch (parseError: any) {
+        console.error("CSV Parsing error:", parseError);
+        setError(`Failed to parse CSV data from AI: ${parseError.message}. The PDF might be complex or the AI response was not standard CSV.`);
         toast({ title: "Parsing Error", description: "Invalid data format from AI. Try another PDF.", variant: "destructive" });
         setExtractedData(null);
         setIsLoading(false);
         return;
       }
 
-      if (!Array.isArray(jsonData)) {
-        setError("Extracted data is not in a table format. AI might have struggled with this PDF structure.");
-        toast({ title: "Extraction Issue", description: "Data not in expected table format. Please check the PDF.", variant: "destructive" });
-        setExtractedData(null);
-      } else if (jsonData.length === 0) {
-        setExtractedData([]); 
-        toast({ title: "Extraction Complete", description: "No tabular data found in the PDF.", variant: "default" });
-      } else if (typeof jsonData[0] !== 'object' || jsonData[0] === null) {
-        setError("Extracted data items are not structured correctly. AI might have struggled with this PDF.");
-        toast({ title: "Extraction Issue", description: "Data items not structured correctly. Please check the PDF.", variant: "destructive" });
-        setExtractedData(null);
+      if (parsedCsvData.length === 0 && result.extractedData && result.extractedData.trim() !== '' && !result.extractedData.trim().includes('\n')) {
+        // CSV has content but only a header row (or unparsable as multi-row)
+         setExtractedData(parsedCsvData); // This will likely be an empty array or an array with one object if headers were parsed
+         toast({ title: "Extraction Complete", description: "CSV extracted, but it appears to contain only headers or no data rows. Please check the PDF.", variant: "default" });
+      } else if (parsedCsvData.length === 0) {
+        setExtractedData([]);
+        toast({ title: "Extraction Complete", description: "No tabular data found or extracted by the AI as CSV.", variant: "default" });
       } else {
-        setExtractedData(jsonData);
-        toast({ title: "Success!", description: "PDF data extracted successfully.", variant: "default" });
+        setExtractedData(parsedCsvData);
+        toast({ title: "Success!", description: "PDF data extracted and parsed successfully.", variant: "default" });
       }
 
     } catch (e: any) {
@@ -162,7 +163,8 @@ export function PdfProcessorClient() {
         : "extracted_data";
       const csvOutputFileName = `${baseFileName}.csv`;
       
-      const csvString = convertToCSV(extractedData);
+      // extractedData is already an array of objects, convertToCSV will correctly serialize it
+      const csvString = convertToCSV(extractedData); 
       downloadCSV(csvString, csvOutputFileName);
       toast({ title: "CSV Downloaded", description: `Data saved as ${csvOutputFileName}` });
     } else {
@@ -204,7 +206,7 @@ export function PdfProcessorClient() {
               <Input
                 id="pdfUrl"
                 type="url"
-                placeholder="https://example.com/document.pdf"
+                placeholder="https://example.com/document.pdf or data:application/pdf;base64,..."
                 value={pdfUrlInput}
                 onChange={(e) => setPdfUrlInput(e.target.value)}
                 className="w-full"
@@ -273,7 +275,7 @@ export function PdfProcessorClient() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <FileText className="mx-auto h-10 w-10 mb-2"/>
-                  No tabular data was found in the PDF.
+                  No tabular data was found in the PDF, or the extracted CSV was empty/header-only.
                 </div>
               )}
             </CardContent>
