@@ -82,7 +82,7 @@ export default function ScriptsPage() {
               <div>
                 <h4 className="font-semibold mb-1">Dependencies:</h4>
                 <p className="text-sm text-muted-foreground">Ensure you have Python installed. Then, install the required libraries using pip (it's recommended to use a virtual environment):</p>
-                <code className="block bg-muted p-2 rounded-md text-sm my-2 overflow-x-auto">pip install pymupdf opencv-python</code>
+                <code className="block bg-muted p-2 rounded-md text-sm my-2 overflow-x-auto">pip install pymupdf opencv-python numpy</code>
               </div>
               <div>
                 <h4 className="font-semibold mb-1">Usage:</h4>
@@ -91,7 +91,7 @@ export default function ScriptsPage() {
                   <li>Run the script from your terminal (e.g., <code className="text-xs bg-muted px-1 rounded">python pdf_cropper.py</code>).</li>
                   <li>A popup window will appear. Use it to select the PDF file you want to crop.</li>
                   <li>A window will then open with a preview of the PDF.</li>
-                  <li>Use your mouse to draw a rectangle around the area you want to crop. <span className="text-destructive font-semibold">(Note: Markings will appear, selecting the area)</span>.</li>
+                  <li>Use your mouse to draw a rectangle around the area you want to crop. <span className="text-destructive font-semibold">(Note: Selected region marker will appear only after selecting the area)</span>.</li>
                   <li>After selecting the area, press the Enter key to confirm.</li>
                   <li>The cropped PDF will be saved in the same folder as the script.</li>
                 </ul>
