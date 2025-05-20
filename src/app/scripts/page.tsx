@@ -122,11 +122,11 @@ export default function ScriptsPage() {
               <div>
                 <h4 className="font-semibold mb-1">Usage:</h4>
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Place the <code className="text-xs bg-muted px-1 rounded">pdf_cutter.py</code> script and your PDF file in the same folder.</li>
-                  <li>Open the script and edit the <code className="text-xs bg-muted px-1 rounded">INPUT_PDF_FILENAME</code> variable to match your PDF's name.</li>
+                  <li>Ensure the <code className="text-xs bg-muted px-1 rounded">pdf_cutter.py</code> script is accessible.</li>
                   <li>Run the script from your terminal: <code className="text-xs bg-muted px-1 rounded">python pdf_cutter.py</code></li>
-                  <li>The script will prompt you to enter the number of pages for each smaller PDF (e.g., 5).</li>
-                  <li>The cut PDFs will be saved in the same folder with names like <code className="text-xs bg-muted px-1 rounded">[your_document]_part_1_pages_1-5.pdf</code>.</li>
+                  <li>A popup window will appear to select the PDF file you want to cut.</li>
+                  <li>After selecting the PDF, the script will prompt you to enter the number of pages for each smaller PDF (e.g., 5).</li>
+                  <li>The cut PDFs will be saved in the same folder as the script, with names like <code className="text-xs bg-muted px-1 rounded">[your_document]_part_1_pages_1-5.pdf</code>.</li>
                 </ul>
               </div>
             </CardContent>
