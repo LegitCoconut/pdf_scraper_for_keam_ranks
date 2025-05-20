@@ -1,3 +1,4 @@
+
 // This is an AI-powered function that extracts structured data from a PDF document.
 // It identifies column headers and aligns data accordingly, returning it in CSV format.
 // - extractPdfData - The function to extract data from a PDF.
@@ -21,7 +22,9 @@ export type ExtractPdfDataInput = z.infer<typeof ExtractPdfDataInputSchema>;
 const ExtractPdfDataOutputSchema = z.object({
   extractedData: z
     .string()
-    .describe('The extracted data from the PDF, formatted as a CSV string. The first row of the CSV must be the column headers: Phase,Course,College_Name,College_Code,Type,Rank_Details.'),
+    .describe(
+      'The extracted data from the PDF, formatted as a CSV string. The first row of the CSV must be the column headers: Phase,Course,College_Name,College_Code,Type,SM,EZ,MU,LA,BH,DV,VK,BX,KN,KU,SC,ST,EW'
+    ),
 });
 export type ExtractPdfDataOutput = z.infer<typeof ExtractPdfDataOutputSchema>;
 
@@ -33,9 +36,9 @@ const extractPdfDataPrompt = ai.definePrompt({
   name: 'extractPdfDataPrompt',
   input: {schema: ExtractPdfDataInputSchema},
   output: {schema: ExtractPdfDataOutputSchema},
-  prompt: `You are an expert data extraction specialist. Your task is to meticulously extract specific tabular data from all pages of the provided PDF document and return it as a single, valid CSV string.
+  prompt: `You are an expert data extraction specialist. Your task is to meticulously extract specific tabular data from ALL PAGES of the provided PDF document and return it as a single, valid CSV string.
 
-The required columns are EXACTLY: Phase,Course,College_Name,College_Code,Type,Rank_Details
+The required columns for the CSV are EXACTLY: Phase,Course,College_Name,College_Code,Type,SM,EZ,MU,LA,BH,DV,VK,BX,KN,KU,SC,ST,EW
 
 Instructions for each column:
 1.  **Phase**: Identify the phase. If no phase information is explicitly found in the document for a row, default this value to '1'.
@@ -43,14 +46,14 @@ Instructions for each column:
 3.  **College_Name**: Extract the full name of the college. CRITICAL: Remove any newline characters from the college name, presenting it as a single line of text.
 4.  **College_Code**: Extract the college code.
 5.  **Type**: Extract the type (e.g., of course, institution, program category).
-6.  **Rank_Details**: Extract any ranking information or related details.
+6.  **Rank Categories (SM, EZ, MU, LA, BH, DV, VK, BX, KN, KU, SC, ST, EW)**: For each of these specific rank categories, extract the corresponding rank detail or value. If a rank category is not present or not applicable for a particular row/entry, leave the cell for that rank category empty in the CSV. Do NOT create a generic "Rank_Details" column.
 
 General Extraction Rules:
-- Process ALL pages of the PDF. If data for the same table or logical group spans multiple pages, append the rows sequentially.
-- The VERY FIRST ROW of your output CSV string MUST be the headers: "Phase,Course,College_Name,College_Code,Type,Rank_Details".
+- You MUST process ALL pages of the PDF. If data for the same table or logical group spans multiple pages, append the rows sequentially.
+- The VERY FIRST ROW of your output CSV string MUST be these exact headers: "Phase,Course,College_Name,College_Code,Type,SM,EZ,MU,LA,BH,DV,VK,BX,KN,KU,SC,ST,EW".
 - For each subsequent row, provide the data corresponding to these headers.
-- If a specific field (other than Phase, which defaults to '1') is not found or not applicable for a row, leave the corresponding CSV cell empty.
-- Ensure data within each cell is on a single line. If original text contains newlines, replace them with a space. If newlines are absolutely essential for meaning (e.g., within a multi-line rank detail), ensure they are correctly escaped within a properly quoted CSV field.
+- If a specific field (other than Phase, which defaults to '1', or a rank category which should be empty if not found) is not found or not applicable for a row, leave the corresponding CSV cell empty.
+- Ensure data within each cell is on a single line. If original text contains newlines (especially in descriptive fields that are NOT College_Name), replace them with a space. If newlines are absolutely essential for meaning, ensure they are correctly escaped within a properly quoted CSV field. College_Name MUST NOT contain newlines.
 - Ensure the entire output is a valid CSV format (e.g., values containing commas, newlines between rows, or quotes must be enclosed in double quotes, and internal double quotes must be escaped as "").
 - Do NOT include any explanatory text, summaries, or any content other than the CSV data itself. Your entire response should be the CSV string.
 
@@ -80,4 +83,3 @@ const extractPdfDataFlow = ai.defineFlow(
     return output!;
   }
 );
-
