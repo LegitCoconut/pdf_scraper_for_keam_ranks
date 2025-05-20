@@ -75,7 +75,7 @@ export default function ScriptsPage() {
             <CardHeader>
               <CardTitle className="text-2xl text-accent">PDF Cropper</CardTitle>
               <CardDescription>
-                Visually select and crop unnecessary regions from your PDF pages. This can significantly improve the accuracy of data scraping by focusing the AI on relevant content.
+                Select a PDF file via a popup window, then specify how you want to split its pages. This tool helps break down large PDFs into smaller, more manageable files for processing.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -87,12 +87,12 @@ export default function ScriptsPage() {
               <div>
                 <h4 className="font-semibold mb-1">Usage:</h4>
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Place the <code className="text-xs bg-muted px-1 rounded">pdf_cropper.py</code> script and your PDF file in the same folder.</li>
-                  <li>Open the script and edit the <code className="text-xs bg-muted px-1 rounded">INPUT_PDF_FILENAME</code> variable to match your PDF's name.</li>
-                  <li>Run the script from your terminal: <code className="text-xs bg-muted px-1 rounded">python pdf_cropper.py</code></li>
-                  <li>A window will pop up displaying the first page of your PDF. Click and drag to select the region you want to keep.</li>
-                  <li>The selected region will be highlighted. Press <kbd>ENTER</kbd> to confirm.</li>
-                  <li>The script will process all pages and save a new PDF named <code className="text-xs bg-muted px-1 rounded">[your_document]_cropped.pdf</code>.</li>
+                  <li>Ensure the <code className="text-xs bg-muted px-1 rounded">pdf_cropper.py</code> script is accessible.</li>
+                  <li>Run the script from your terminal (e.g., <code className="text-xs bg-muted px-1 rounded">python pdf_cropper.py</code>).</li>
+                  <li>A popup window will appear. Use it to select the PDF file you want to process.</li>
+                  <li>The script will then prompt you to enter details for splitting the pages (e.g., number of pages per new file).</li>
+                  <li>Provide the requested values.</li>
+                  <li>The script will then cut the PDF and save the new, smaller PDF files.</li>
                 </ul>
               </div>
             </CardContent>
@@ -148,3 +148,4 @@ export default function ScriptsPage() {
     </main>
   );
 }
+
