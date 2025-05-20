@@ -84,9 +84,6 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
-       <p className="mt-8 text-sm text-muted-foreground">
-        Hint: The password is set in the <code className="bg-muted px-1.5 py-0.5 rounded">.env</code> file (APP_PASSWORD).
-      </p>
     </main>
   );
 }
