@@ -43,7 +43,7 @@ export default function HomePage() {
           
           <div className="flex flex-1 items-center justify-end space-x-2 md:space-x-4">
             <Link href="/scripts" passHref>
-              <Button variant="outline">
+              <Button variant="outline" size="lg" className="px-4">
                 <FileCode2 className="mr-2 h-4 w-4" />
                 Helper Scripts
               </Button>
@@ -75,7 +75,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 container mx-auto max-w-4xl w-full py-8 px-4 flex flex-col items-center">
+      <main className="flex-1 w-full py-8 px-4 flex flex-col items-center">
         <div className="text-center mb-10"> {/* Increased mb for spacing */}
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">
             Unlock data from your PDF files. Intelligently extract tables and export to CSV with a single click.
@@ -86,3 +86,4 @@ export default function HomePage() {
     </div>
   );
 }
+

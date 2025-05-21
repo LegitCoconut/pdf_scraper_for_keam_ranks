@@ -173,77 +173,79 @@ export function PdfProcessorClient() {
   };
 
   return (
-    <Card className="w-full shadow-xl border-t-4 border-primary">
-      <CardHeader>
-        <CardTitle className="text-2xl">Upload or Link PDF</CardTitle>
-        <CardDescription>
-          Choose a PDF file from your device or provide a direct public URL to a PDF document. Max file size: 10MB.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'upload' | 'url')} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="upload"><UploadCloud className="mr-2 h-4 w-4" /> Upload File</TabsTrigger>
-            <TabsTrigger value="url"><LinkIcon className="mr-2 h-4 w-4" /> Paste URL</TabsTrigger>
-          </TabsList>
-          <TabsContent value="upload">
-            <div className="space-y-2">
-              <Label htmlFor="pdfFile" className="text-sm font-medium">Select PDF File</Label>
-              <Input
-                id="pdfFile"
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                className="w-full text-sm file:text-sm file:font-semibold file:bg-primary/10 file:text-primary file:py-2 file:px-4 file:rounded-lg file:border-0 hover:file:bg-primary/20 cursor-pointer"
-                disabled={isLoading}
-              />
-              {fileName && <p className="text-sm text-muted-foreground pt-1">Selected: {fileName}</p>}
-            </div>
-          </TabsContent>
-          <TabsContent value="url">
-            <div className="space-y-2">
-              <Label htmlFor="pdfUrl" className="text-sm font-medium">PDF URL</Label>
-              <Input
-                id="pdfUrl"
-                type="url"
-                placeholder="https://example.com/document.pdf or data:application/pdf;base64,..."
-                value={pdfUrlInput}
-                onChange={(e) => setPdfUrlInput(e.target.value)}
-                className="w-full"
-                disabled={isLoading}
-              />
-               <p className="text-xs text-muted-foreground pt-1">
-                Must be a publicly accessible URL (http/https) or a Base64 data URI.
-              </p>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-      <CardFooter className="flex flex-col items-stretch gap-4 sm:flex-row sm:justify-end pt-6">
-         <Button 
-          onClick={handleProcessPdf} 
-          disabled={isLoading || (activeTab === 'upload' && !pdfFile) || (activeTab === 'url' && !pdfUrlInput.trim())}
-          className="w-full sm:w-auto text-base py-3 px-6" // Larger button
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing...
-            </>
-          ) : (
-            "Process PDF"
-          )}
-        </Button>
-      </CardFooter>
+    <div className="w-full md:w-[90%] max-w-6xl mx-auto">
+      <Card className="w-full shadow-xl border-t-4 border-primary">
+        <CardHeader>
+          <CardTitle className="text-2xl">Upload or Link PDF</CardTitle>
+          <CardDescription>
+            Choose a PDF file from your device or provide a direct public URL to a PDF document. Max file size: 10MB.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'upload' | 'url')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="upload"><UploadCloud className="mr-2 h-4 w-4" /> Upload File</TabsTrigger>
+              <TabsTrigger value="url"><LinkIcon className="mr-2 h-4 w-4" /> Paste URL</TabsTrigger>
+            </TabsList>
+            <TabsContent value="upload">
+              <div className="space-y-2">
+                <Label htmlFor="pdfFile" className="text-sm font-medium">Select PDF File</Label>
+                <Input
+                  id="pdfFile"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                  className="w-full text-sm file:text-sm file:font-semibold file:bg-primary/10 file:text-primary file:py-2 file:px-4 file:rounded-lg file:border-0 hover:file:bg-primary/20 cursor-pointer"
+                  disabled={isLoading}
+                />
+                {fileName && <p className="text-sm text-muted-foreground pt-1">Selected: {fileName}</p>}
+              </div>
+            </TabsContent>
+            <TabsContent value="url">
+              <div className="space-y-2">
+                <Label htmlFor="pdfUrl" className="text-sm font-medium">PDF URL</Label>
+                <Input
+                  id="pdfUrl"
+                  type="url"
+                  placeholder="https://example.com/document.pdf or data:application/pdf;base64,..."
+                  value={pdfUrlInput}
+                  onChange={(e) => setPdfUrlInput(e.target.value)}
+                  className="w-full"
+                  disabled={isLoading}
+                />
+                 <p className="text-xs text-muted-foreground pt-1">
+                  Must be a publicly accessible URL (http/https) or a Base64 data URI.
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+        <CardFooter className="flex flex-col items-stretch gap-4 sm:flex-row sm:justify-end pt-6">
+           <Button 
+            onClick={handleProcessPdf} 
+            disabled={isLoading || (activeTab === 'upload' && !pdfFile) || (activeTab === 'url' && !pdfUrlInput.trim())}
+            className="w-full sm:w-auto text-base py-3 px-6" // Larger button
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing...
+              </>
+            ) : (
+              "Process PDF"
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
 
       {isLoading && (
-        <div className="flex flex-col items-center justify-center p-8 my-6 border border-dashed rounded-lg bg-card/50 mx-6">
+        <div className="flex flex-col items-center justify-center p-8 my-6 border border-dashed rounded-lg bg-card/50 w-full">
           <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
           <p className="text-muted-foreground text-center">Extracting data... This may take a moment for large or complex PDFs.</p>
         </div>
       )}
 
       {error && !isLoading && (
-        <div className="mx-6 my-6">
+        <div className="my-6 w-full">
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Extraction Failed</AlertTitle>
@@ -253,8 +255,8 @@ export function PdfProcessorClient() {
       )}
       
       {extractedData && !isLoading && (
-        <div className="mt-8 mx-0 md:mx-6">
-          <Card className="shadow-lg border-accent">
+        <div className="mt-8 w-full">
+          <Card className="shadow-lg border-accent w-full">
             <CardHeader>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <CardTitle className="text-xl">Extracted Data</CardTitle>
@@ -284,13 +286,14 @@ export function PdfProcessorClient() {
       )}
 
       {!isLoading && !error && !extractedData && (
-        <div className="mt-8 p-10 border-2 border-dashed rounded-lg text-center bg-card/50 mx-6 mb-6">
+        <div className="mt-8 p-10 border-2 border-dashed rounded-lg text-center bg-card/50 w-full mb-6">
           <FileText className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
           <p className="text-lg text-muted-foreground">
             Your extracted PDF data will appear here once processed.
           </p>
         </div>
       )}
-    </Card>
+    </div>
   );
 }
+
